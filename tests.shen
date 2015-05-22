@@ -12,7 +12,7 @@
 (test-check "1.11"
   (run* Q
     (=== true Q))
-  [(wval true)])
+  [true])
 
 (test-check "1.12"
   (run* Q
@@ -24,25 +24,25 @@
   (run* Q
     mk-succeed 
     (=== true Q))
-  [(wval true)])
+  [true])
 
 (test-check "1.14"
   (run* Q
     mk-succeed 
     (=== true Q))
-  [(wval true)])
+  [true])
 
 (test-check "1.15"
   (run* R 
     mk-succeed
     (=== corn R))
-  [(wval corn)])
+  [corn])
 
 (test-check "1.16"
   (run* R 
     mk-succeed
     (=== corn R))
-  [(wval corn)])
+  [corn])
 
 (test-check "1.17"
   (run* R
@@ -54,7 +54,7 @@
   (run* Q
     mk-succeed 
     (=== false Q))
-  [(wval false)])
+  [false])
 
 (test-check "1.22"
   (run* X
@@ -67,21 +67,21 @@
     (fresh (X)
       (=== true X)
       (=== true Q)))
-   [(wval true)])
+   [true])
 
 (test-check "1.26"
   (run* Q
     (fresh (X)
       (=== X true)
       (=== true Q)))
-  [(wval true)])
+  [true])
 
 (test-check "1.27"
   (run* Q
     (fresh (X)
       (=== X true)
       (=== Q true)))
-  [(wval true)])
+  [true])
 
 (test-check "1.28"
   (run* X mk-succeed)  
@@ -132,13 +132,13 @@
   (run* Q
     (=== false Q)
     (=== false Q))
-  [(wval false)])
+  [false])
 
 (test-check "1.36"
   (run* Q
     (let X Q
       (=== true X)))
-  [(wval true)])
+  [true])
 
 (test-check "1.37"
   (run* R
@@ -151,28 +151,27 @@
     (fresh (X)
       (=== true X)
       (=== X Q)))
-  [(wval true)])
+  [true])
 
 (test-check "1.39"
   (run* Q
     (fresh (X)
       (=== X Q)
       (=== true X)))
-  [(wval true)])
+  [true])
 
-\* Note the use of wval below. *\
 (test-check "1.40.1"
   (run* Q
     (fresh (X)
-	   (=== (wval (= X Q)) Q)))
-  [(wval false)])
+	   (=== (= X Q) Q)))
+  [false])
 
 (test-check "1.40.2"
   (run* Q
     (let X Q
       (fresh (Q)
-	     (=== (wval (= X Q)) X))))
-  [(wval false)])
+	     (=== (= X Q) X))))
+  [false])
 
 (test-check "1.44"
   (run* Q
@@ -206,7 +205,7 @@
       ((=== olive X) mk-succeed)
       ((=== oil X) mk-succeed)
       (else mk-fail)))
-  [(wval olive) (wval oil)])
+  [olive oil])
 
 (test-check "1.49"
   (run 1 X
@@ -214,7 +213,7 @@
       ((=== olive X) mk-succeed)
       ((=== oil X) mk-succeed)
       (else mk-fail)))
-  [(wval olive)])
+  [olive])
 
 (test-check "1.50.1"
   (run* X
@@ -224,7 +223,7 @@
       (mk-succeed mk-succeed)
       ((=== oil X) mk-succeed)
       (else mk-fail)))
-  [(wval olive) (create-var _.0) (wval oil)])
+  [olive (create-var _.0) oil])
 
 (test-check "1.50.2"
   (run* X
@@ -233,7 +232,7 @@
       (mk-succeed mk-succeed)
       ((=== oil X) mk-succeed)
       (else mk-fail)))
-  [(wval olive) (create-var _.0) (wval oil)])
+  [olive (create-var _.0) oil])
 
 (test-check "1.52"
   (run 2 X
@@ -243,7 +242,7 @@
       ((=== olive X) mk-succeed)
       ((=== oil X) mk-succeed)  
       (else mk-fail)))
-  [(wval extra) (wval olive)])
+  [extra olive])
 
 (test-check "1.53"
   (run* R
@@ -251,7 +250,7 @@
 	       (=== split X)
 	       (=== pea Y)
 	       (=== [X Y] R)))
-  [[(wval split) (wval pea)]])
+  [[split pea]])
 
 (test-check "1.54"
   (run* R
@@ -262,7 +261,7 @@
 	    ((=== navy X) (=== bean Y))
 	    (else mk-fail))
 	   (=== [X Y] R)))
-  [[(wval split) (wval pea)] [(wval navy) (wval bean)]])
+  [[split pea] [navy bean]])
 
 (test-check "1.55"
   (run* R
@@ -272,7 +271,7 @@
        ((=== navy X) (=== bean Y))
        (else mk-fail))
       (=== [X Y soup] R)))
-  [[(wval split) (wval pea) (wval soup)] [(wval navy) (wval bean) (wval soup)]])
+  [[split pea soup] [navy bean soup]])
 
 (define teacupo
   { (walkable symbol) --> (query symbol) }
@@ -283,7 +282,7 @@
 (test-check "1.56"
   (run* X
     (teacupo X))
-  [(wval tea) (wval cup)])
+  [tea cup])
 
 (test-check "1.57"
   (run* R
@@ -293,7 +292,7 @@
         ((=== false X) (=== true Y))
         (else mk-fail))
       (=== [X Y] R)))
-  [[(wval tea) (wval true)] [(wval cup) (wval true)] [(wval false) (wval true)]])
+  [[tea true] [cup true] [false true]])
 
 (test-check "1.58"
   (run* R
@@ -314,14 +313,14 @@
 	(else mk-fail))
       (=== false X)
       (=== [Y Z] R)))
-  [[(wval false) (create-var _.0)] [(create-var _.0) (wval false)]])
+  [[false (create-var _.0)] [(create-var _.0) false]])
 
 (test-check "1.60"
   (run* Q
 	(let A (=== true Q)
 	     B (=== false Q)
 	  B))
-  [(wval false)])
+  [false])
 
 (test-check "1.61"
   (run* Q
@@ -333,7 +332,7 @@
 		((=== true Q) mk-succeed)
 		(else (=== false Q)))
 	  B))
-  [(wval false)])
+  [false])
 
 (test-check "2.2"
   (run* R
@@ -354,20 +353,20 @@
 
 (test-check "2.6"
   (run* R (caro [a c o r n] R))
-  [(wval a)])
+  [a])
 
 (test-check "2.7"
   (run* Q
     (caro [a c o r n] a)
     (=== true Q))
-  [(wval true)])
+  [true])
 
 (test-check "2.8"
   (run* R
     (fresh (X Y)
       (caro [R Y] X)
       (=== [pear] X)))
-  [[(wval pear)]])
+  [[pear]])
 
 (test-check "2.11"
   (run* R
@@ -375,7 +374,7 @@
       (caro [grape raisin pair] X)
       (caro [[a] [b] [c]] Y)
       (=== [X | Y] R)))
-  [[(wval grape) (wval a)]])
+  [[grape a]])
 
 \* 2.16 *\
 (define cdro
@@ -387,7 +386,7 @@
     (fresh (V)
       (cdro [a c o r n] V)
       (caro V R)))
-  [(wval c)])
+  [c])
 
 (test-check "2.18"
   (run* R
@@ -395,18 +394,18 @@
       (cdro [grape raisin pear] X)
       (caro [[a] [b] [c]] Y)
       (=== [X | Y] R)))
-  [[[(wval raisin) (wval pear)] (wval a)]])
+  [[[raisin pear] a]])
 
 (test-check "2.19.1"
   (run* Q
 	(cdro [a c o r n] [c o r n]) 
 	(=== true Q))
-  [(wval true)])
+  [true])
 
 (test-check "2.20.1"
   (run* X
 	(cdro [c o r n] [X r n]))
-  [(wval o)])
+  [o])
 
 (test-check "2.21"
   (run* L
@@ -414,7 +413,7 @@
       (cdro L [c o r n])
       (caro L X)
       (=== a X)))
-  [[(wval a) (wval c) (wval o) (wval r) (wval n)]])
+  [[a c o r n]])
 
 (define conso
   { (walkable A) --> (walkable A) --> (walkable A) --> (query A) } 
@@ -423,12 +422,12 @@
 (test-check "2.22"
   (run* L
 	(conso [a b c] [d e] L))  
-  [[[(wval a) (wval b) (wval c)] (wval d) (wval e)]])
+  [[[a b c] d e]])
 
 (test-check "2.23.1"
   (run* X
     (conso X [a b c] [d a b c]))
-  [(wval d)])
+  [d])
 
 (test-check "2.24"
   (run* R
@@ -439,7 +438,7 @@
 
 (test-check "2.25.1"
   (run* X (conso X [a X c] [d a X c]))
-  [(wval d)])
+  [d])
 
 (test-check "2.26"
   (run* L
@@ -481,7 +480,7 @@
   (run* Q
     (nullo [])
     (=== true Q))
-  [(wval true)])
+  [true])
 
 (test-check "2.34"
   (run* X
@@ -502,13 +501,13 @@
   (run* Q
     (eqo plum plum)
     (=== true Q))
-  [(wval true)])
+  [true])
 
 (test-check "2.52"
   (run* R
     (fresh (X Y)
 	   (=== [X Y salad] R)))
-  [[(create-var _.0) (create-var _.1) (wval salad)]])
+  [[(create-var _.0) (create-var _.1) salad]])
 
 (define pairo
   { (walkable A) --> (query A) }
@@ -518,7 +517,7 @@
   (run* Q
     (pairo [Q | Q])
     (=== true Q))
-  [(wval true)])
+  [true])
 
 (test-check "2.55"
   (run* Q
@@ -599,14 +598,14 @@
     (fresh (X Y)
 	   (lolo [[a b] [X c] [d Y]])
       (=== true Q)))
-  [(wval true)])
+  [true])
 
 (test-check "3.22"
   (run 1 Q
     (fresh (X)
 	   (lolo [[a b] | X])
 	   (=== true Q)))
-  [(wval true)])
+  [true])
 
 (test-check "3.23"
   (run 1 X
@@ -633,12 +632,12 @@
   (run* Q
     (twinso [tofu tofu])
     (=== true Q))
-  [(wval true)])
+  [true])
 
 (test-check "3.33"
   (run* Z
     (twinso [Z tofu]))
-  [(wval tofu)])
+  [tofu])
 
 \* 3.36 *\
 (define twinso
@@ -710,7 +709,7 @@
   (run 3 Out
     (fresh (W X Y Z)
       (=== [[g g] [e W] [X Y] | Z] Out)
-      (listofo (wguard twinso) Out)))
+      (listofo twinso Out)))
   [[[g g] [e e] [(create-var _.1) (create-var _.1)]]
    [[g g] [e e] [(create-var _.1) (create-var _.1)]
     [(create-var _.3) (create-var _.3)]]
@@ -746,21 +745,21 @@
   (run* Q
     (membero olive [virgin olive oil])
     (=== true Q))
-  [(wval true)])
+  [true])
 
 (test-check "3.58"
   (run 1 Y
     (membero Y [hummus with pita]))
-  [(wval hummus)])
+  [hummus])
 
 (test-check "3.59"
   (run 1 Y
     (membero Y [with pita]))
-  [(wval with)])
+  [with])
 
 (test-check "3.60"
   (run 1 Y (membero Y [pita]))
-  [(wval pita)])
+  [pita])
 
 (test-check "3.61"
   (run* Y (membero Y []))
@@ -768,7 +767,7 @@
 
 (test-check "3.62"
   (run* Y (membero Y [hummus with pita]))
-  (map wval [hummus with pita]))
+  [hummus with pita])
 
 \* 3.65 *\ 
 (define identity
@@ -777,7 +776,7 @@
 
 (test-check "3.66"
   (run* X (membero e [pasta X fagioli]))
-  [(wval e)])
+  [e])
 
 (test-check "3.69"
   (run 1 X (membero e [pasta e X fagioli]))
@@ -785,7 +784,7 @@
 
 (test-check "3.70"
   (run 1 X (membero e [pasta X e fagioli]))
-  [(wval e)])
+  [e])
 
 (test-check "3.71"
   (run* R
@@ -817,7 +816,7 @@
 
 (test-check "3.80.2"
 	    (run 5 L (pmembero tofu L))
-	    [[(wval tofu)]
+	    [[tofu]
 	     [(create-var _.0) tofu]
 	     [(create-var _.0) (create-var _.1) tofu]
 	     [(create-var _.0) (create-var _.1) (create-var _.2) tofu]
@@ -827,7 +826,7 @@
   (run* Q
     (pmembero tofu [a b tofu d tofu])
     (=== true Q))
-  [(wval true)])
+  [true])
 
 \* 3.83 *\ 
 (define pmembero
@@ -843,7 +842,7 @@
   (run* Q
     (pmembero tofu [a b tofu d tofu])
     (=== true Q))
-  [(wval true) (wval true) (wval true)])
+  [true true true])
 
 \* 3.86 *\ 
 (define pmembero
@@ -859,8 +858,8 @@
 (test-check "3.88"
   (run* Q
     (pmembero tofu [a b tofu d tofu])
-    (=== (wval true) Q))
-  [(wval true) (wval true)])
+    (=== true Q))
+  [true true])
 
 \* 3.93 *\
 (define pmembero
@@ -912,7 +911,7 @@
 (test-check "4.3"
   (run* Out
 	(=== (mem tofu [a b tofu d peas e]) Out))
-  [(map wval [tofu d peas e])])
+  [[tofu d peas e]])
 
 \* 4.7 *\
 (define memo

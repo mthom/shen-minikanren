@@ -131,7 +131,7 @@
 (define +o
   { (walkable number) --> (walkable number) --> (walkable number)
     --> (query number) }
-  N M K -> (addero (wval 0) N M K))
+  N M K -> (addero 0 N M K))
 
 (define -o
   { (walkable number) --> (walkable number) --> (walkable number)

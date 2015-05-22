@@ -1,14 +1,4 @@
-(datatype option-types
-  X : A;
-  =====================
-  [just X] : (maybe A);
-
-  ____________________
-  nothing : (maybe A);)
-
-(datatype protect-type
-  __________________________________
-  protect : (variable --> variable);)
+(set *timestamp* 0)
 
 (define assq
   { A --> (list (A * B)) --> (maybe B) }
@@ -31,39 +21,11 @@
   V -> true where (or (variable? V) (reified-name? (str V))) 
   _ -> false)
 
-(datatype timestamp-type
-  if (and (>= N 0) (integer? N))
-  ______________________________
-  N : timestamp;
-
-  N : number;
-  =================================================
-  (string->symbol (@s "_" "." (str N))) : variable;
-
-  if (mk-variable? V)
-  V : symbol;
-  ___________________
-  V : variable;
-
-  (mk-variable? V) : verified;
-  V : symbol;
-  ____________________________
-  V : variable;
-
-  if (element? Op [+ *])
-  _____________________________________________
-  Op : (timestamp --> timestamp --> timestamp);)
-
-(datatype timestamp-instances
-  ________________________________
-  (value *timestamp*) : timestamp;)
-
-(synonyms var (variable * timestamp)
-	  (substitution A) (var * A))
-
 (define var
   { variable --> var }
-  V -> (@p V (incf *timestamp*)))
+  V -> (let T (value *timestamp*)
+	 (do (set *timestamp* (+ T 1))
+	     (@p V T))))
 
 (define empty-s
   { --> (list (substitution A)) }
@@ -72,35 +34,6 @@
 (define ext-s
   { var --> A --> (list (substitution A)) --> (list (substitution A))}
   X V S -> [(@p X V) | S])
-
-(datatype walkable-type  
-  __________________
-  [] : (walkable A);
-
-  V : variable;
-  T : timestamp;
-  =======================
-  (@p V T): (walkable A);
-
-  X  : (walkable A);
-  Xs : (walkable A);
-  ========================
-  [X | Xs] : (walkable A);
-
-  X  : A;
-  Xs : (walkable A);
-  ________________________
-  [X | Xs] : (walkable A);
-
-  __________________________
-  X : A >> X : (walkable A);
-
-  _______________________________________________
-  X : (variable * timestamp) >> X : (walkable A);)
-
-(define wval
-  { A --> (walkable A) }
-  X -> X)
 
 (define wvar
   { var --> (walkable A) }
@@ -191,21 +124,6 @@
   { (walkable A) --> (walkable A) }
   W -> (walk* W (reify-s W (empty-s))))
 
-(datatype datastream
-  X : A;
-  F : (lazy (datastream A));
-  ==========================
-  (@p X F) : (datastream A);
-
-  X : A;
-  =====================
-  [X] : (datastream A);
-
-  ____________________
-  [] : (datastream A);)
-
-(synonyms (query A) ((pairs A) --> (datastream (pairs A))))
-
 (define mk-fail
   { A --> (datastream A) }
   _ -> [])
@@ -265,24 +183,18 @@
 
 (defmacro anye-macro
   [anye G1 G2] -> (let S (gensym (protect S))
-		       GV1 (inject-values G1)
-		       GV2 (inject-values G2)
-		    [lambdag@ S [mplus [GV1 S] [lambdaf@ [GV2 S]]]]))
+		    [lambdag@ S [mplus [G1 S] [lambdaf@ [G2 S]]]]))
 
 (defmacro alli-macro
   [alli] -> [mk-succeed]
   [alli G] -> (let S (gensym (protect S))
-		   GV (inject-values G)
-		[lambdag@ S [GV S]])
+		[lambdag@ S [G S]])
   [alli G1 G2 | Gs] -> (let S (gensym (protect S))
-			    GV (inject-values G1)
-			 [lambdag@ S [mk-bindi [GV S] [alli G2 | Gs]]]))
+			 [lambdag@ S [mk-bindi [G1 S] [alli G2 | Gs]]]))
 
 (defmacro anyi-macro
   [anyi G1 G2] -> (let S (gensym (protect S))
-		       GV1 (inject-values G1)
-		       GV2 (inject-values G2)
-		    [lambdag@ S [mplusi [GV1 S] [lambdaf@ [GV2 S]]]]))
+		    [lambdag@ S [mplusi [G1 S] [lambdaf@ [G2 S]]]]))
 
 (defmacro condi-macro
   [condi] -> [mk-fail]
@@ -300,9 +212,7 @@
   G0 G1 G2 S -> (ifa-impl- (G0 S) G1 G2 S))
 
 (defmacro ifa-macro
-  [ifa G0 G1 G2] -> [ifa-impl (inject-values G0)
-			      (inject-values G1)
-			      (inject-values G2)])
+  [ifa G0 G1 G2] -> [ifa-impl G0 G1 G2])
 
 (defmacro conda-macro
   [conda] -> [mk-fail]
@@ -320,9 +230,7 @@
   G0 G1 G2 S -> (ifu-impl- (G0 S) G1 G2 S))
 
 (defmacro ifu-macro
-  [ifu G0 G1 G2] -> [ifu-impl (inject-values G0)
-			      (inject-values G1)
-			      (inject-values G2)])
+  [ifu G0 G1 G2] -> [ifu-impl G0 G1 G2])
 
 (defmacro condu-macro
   [condu] -> [mk-fail]

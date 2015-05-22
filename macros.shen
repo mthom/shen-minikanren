@@ -1,26 +1,9 @@
-(defmacro incf-macro
-  [incf Loc]     -> [incf Loc 0]
-  [incf Loc Def] -> (let N (gensym (protect N))
-		      [let N [trap-error [value Loc] [/. _ [set Loc Def]]]
-			[set Loc [+ N 1]]]))
-
 (define replace
-  X XG [X | Xs] -> [XG | (replace X XG Xs)]
-  X XG [L | Ls] -> [(replace X XG L) | (replace X XG Ls)]
-  X XG [] -> []
-  X XG X  -> XG
-  _ _  L  -> L)
-
-(define inject-values
-  [] -> []
-  [wguard X] -> X
-  [wval X] -> [wval X]
-  [X | Xs] -> [X | (map inject-values Xs)] where (cons? Xs)
-  [X | Y] -> [(inject-values X) | (inject-values Y)]
-  V -> V where (variable? V)
-  mk-succeed -> mk-succeed
-  mk-fail -> mk-fail
-  X -> [wval X])
+     X XG [X | Xs] -> [XG | (replace X XG Xs)]
+     X XG [L | Ls] -> [(replace X XG L) | (replace X XG Ls)]
+     X XG [] -> []
+     X XG X  -> XG
+     _ _  L  -> L)
 
 (defmacro mzero-macro
   [mzero] -> [])
@@ -74,11 +57,9 @@
 (defmacro all-macro
   [all]   -> [mk-succeed]
   [all G] -> (let S (gensym (protect S))
-	          GV (inject-values G)
-	       [lambdag@ S [GV S]])
+	       [lambdag@ S [G S]])
   [all G | Gs] -> (let S (gensym (protect S))
-		       GV (inject-values G)
-		    [lambdag@ S [mk-bind [GV S] [all | Gs]]]))
+		    [lambdag@ S [mk-bind [G S] [all | Gs]]]))
 
 (defmacro run*-macro
   [run* X G | Gs] -> [run nothing X G | Gs])

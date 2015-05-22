@@ -10,9 +10,8 @@ DSL for logic programming. It was adapted with Will Byrd's Scheme
 [[http://github.com/miniKanren/TheReasonedSchemer/][sources]], which follow the definition of miniKanren given in the
 appendix of The Reasoned Schemer.
 
-shen-minikanren integrates (nearly) seamlessly into Shen's type
-system. For instance, this form (example 1.54 in The Reasoned Schemer)
-will type check:
+shen-minikanren integrates seamlessly into Shen's type system. This
+form (example 1.54 in The Reasoned Schemer) type checks as:
 
 #+BEGIN_SRC shen
  (60+) (run* R
@@ -26,34 +25,11 @@ will type check:
  [[split pea] [navy bean]] : (list (walkable symbol))
 #+END_SRC
 
-but the form
-
-: (61+) (=== navy pea)
-
-will not. All values inside queries contained in a *run** or *fresh*
-form are implicitly wrapped in a *wval* injector, which is a tactic
-used to prove that a value of type A is a walkable value of the
-appropriate type:
-
-#+BEGIN_SRC shen
- (define wval
-  { A --> (walkable A) }
-  X -> X)
-#+END_SRC
-
-*wval* can be used to make queries outside of a *run** / *fresh*
-context typecheck:
-
-: (=== (wval navy) (wval pea))
-
-The wrapper *wguard* can be used to prevent a value from being wrapped
-as a walkable value in an applicable context (see example 3.49 in
-tests.shen for an example).
-
 The files that make up the implementation should be loaded into a Shen
 REPL in this order:
 
 + macros.shen (with tc -)
++ types.shen (with tc +)
 + minikanren.shen (with tc +)
 + prelude.shen (with tc +)
 
