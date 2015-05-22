@@ -723,7 +723,7 @@
 
 \* 3.51.2 *\
 (define eq-car?
-  { (walkable A) --> (walkable A) --> boolean }
+  { (list (walkable A)) --> (walkable A) --> boolean }
   [X | _] X -> true
   _ _ -> false)
 
@@ -991,6 +991,7 @@
 
 \* 4.22 *\
 (define rember
+  { (walkable A) --> (list (walkable A)) --> (list (walkable A)) }  
   X L -> (cases (null? L) []
 		(eq-car? L X) (tail L)
 		true [(head L) | (rember X (tail L))]))
@@ -999,8 +1000,167 @@
 	    (rember peas [a b peas d peas e])
 	    [a b d peas e])
 
+\* 4.27 *\ 
+(define rembero
+  { (walkable A) --> (walkable A) --> (walkable A) --> (query A) }  
+  X L Out -> (conde
+	      ((nullo L) (=== [] Out))
+	      ((eq-caro L X) (cdro L Out))
+	      (else (fresh (A D Res)
+			   (conso A D L)
+			   (rembero X D Res)
+			   (conso A Res Out)))))
+
+(test-check "4.30"
+  (run 1 Out
+    (fresh (Y)
+	   (rembero peas [a b Y d peas e] Out)))
+  [[a b d peas e]])
+
+(test-check "4.31"
+  (run* Out
+	(fresh (Y Z)
+	       (rembero Y [a b Y d Z e] Out)))
+  [[b a d (create-var _.0) e]
+   [a b d (create-var _.0) e]
+   [a b d (create-var _.0) e]
+   [a b d (create-var _.0) e]
+   [a b (create-var _.0) d e]
+   [a b e d (create-var _.0)]
+   [a b (create-var _.0) d (create-var _.1) e]])
+
+(test-check "4.49"
+  (run* R
+    (fresh (Y Z) 
+      (rembero Y [Y d Z e] [Y d e])
+      (=== [Y Z] R)))
+  [[d d]
+   [d d]
+   [(create-var _.1) (create-var _.1)]
+   [e e]])
+
+(test-check "4.57"
+  (run 13 W
+    (fresh (Y Z Out)
+	   (rembero Y [a b Y d Z | W] Out)))
+  [(create-var _.0)
+   (create-var _.0)
+   (create-var _.0)
+   (create-var _.0)
+   (create-var _.0)
+   []
+   [(create-var _.0) | (create-var _.1)]
+   [(create-var _.0)]
+   [(create-var _.0) (create-var _.1) | (create-var _.2)]
+   [(create-var _.0) (create-var _.1)]
+   [(create-var _.0) (create-var _.1) (create-var _.2) | (create-var _.3)]
+   [(create-var _.0) (create-var _.1) (create-var _.2)]
+   [(create-var _.0) (create-var _.1) (create-var _.2) (create-var _.3) | (create-var _.4)]])
+
+\* 4.68 *\
+(define surpriseo
+  { (walkable symbol) --> (query symbol) }
+  S -> (rembero S [a b c] [a b c]))
+
+(test-check "4.69"
+  (run* R
+    (=== d R)
+    (surpriseo R))
+  [d])
+
+(test-check "4.70"
+  (run* R
+	(surpriseo R))
+  [(create-var _.0)])
+
+(test-check "4.72"
+  (run* R
+    (=== b R)
+    (surpriseo R))
+  [b])
+
+\* 5.9 *\
+(define appendo
+  { (walkable A) --> (walkable A) --> (walkable A) --> (query A) }
+  L S Out -> (conde
+	      ((nullo L) (=== S Out))
+	      (else (fresh (A D Res)
+			   (caro L A)
+			   (cdro L D)
+			   (appendo D S Res)
+			   (conso A Res Out)))))
+
+(test-check "5.10"
+  (run* X
+	(appendo
+	 [cake]
+	 [tastes yummy]
+	 X))
+  [[cake tastes yummy]])
+
+(test-check "5.11"
+  (run* X
+    (fresh (Y)
+	   (appendo
+	    [cake with ice Y]
+	    [tastes yummy]
+	    X)))
+  [[cake with ice (create-var _.0) tastes yummy]])
+
+(test-check "5.12"
+  (run* X
+    (fresh (Y)
+	   (appendo
+	    [cake with ice cream]
+	    Y
+	    X)))
+  [[cake with ice cream | (create-var _.0)]])
+
+(test-check "5.13"
+  (run 1 X
+    (fresh (Y)
+	   (appendo [cake with ice | Y] [d t] X)))
+  [[cake with ice d t]])
+
+(test-check "5.14"
+  (run 1 Y
+    (fresh (X)
+	   (appendo [cake with ice | Y] [d t] X)))
+  [[]])
+
+\* 5.15 *\ 
+(define appendo
+  { (walkable A) --> (walkable A) --> (walkable A) --> (query A) }
+  L S Out -> (conde
+	      ((nullo L) (=== S Out))
+	      (else (fresh (A D Res)
+			   (conso A D L)
+			   (appendo D S Res)
+			   (conso A Res Out)))))
+
+(test-check "5.16"
+  (run 5 X
+    (fresh (Y)
+	   (appendo [cake with ice | Y] [d t] X)))
+  [[cake with ice d t]
+   [cake with ice (create-var _.0) d t]
+   [cake with ice (create-var _.0) (create-var _.1) d t]
+   [cake with ice (create-var _.0) (create-var _.1) (create-var _.2) d t]
+   [cake with ice (create-var _.0) (create-var _.1) (create-var _.2) (create-var _.3) d t]])
+
+(test-check "5.17"
+  (run 5 Y
+    (fresh (X)
+	   (appendo [cake with ice | Y] [d t] X)))
+  [[]
+   [(create-var _.0)]
+   [(create-var _.0) (create-var _.1)]
+   [(create-var _.0) (create-var _.1) (create-var _.2)]
+   [(create-var _.0) (create-var _.1) (create-var _.2) (create-var _.3)]])
+
 \* 5.59 *\ 
 (define flatteno
+  { (walkable A) --> (walkable A) --> (query A) }
   S Out -> (conde
 	    ((nullo S) (=== [] Out))
 	    ((pairo S)

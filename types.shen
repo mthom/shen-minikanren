@@ -28,7 +28,7 @@
 (synonyms var (variable * number)
 	  (substitution A) (var * A))
 
-(datatype walkable-type  
+(datatype walkable-type
   __________________
   [] : (walkable A);
 
@@ -41,16 +41,16 @@
   Xs : (walkable A);
   ========================
   [X | Xs] : (walkable A);
-  
-  X : A; !;
-  _________________
-  X : (walkable A);
-  
+
   __________________________
   X : A >> X : (walkable A);
 
   ____________________________________________
-  X : (variable * number) >> X : (walkable A);)
+  X : (variable * number) >> X : (walkable A);
+
+  X : A;
+  _________________
+  X : (walkable A);)
 
 (datatype datastream
   X : A;
@@ -65,9 +65,9 @@
   ____________________
   [] : (datastream A);)
 
-(synonyms (query A) ((pairs A) --> (datastream (pairs A))))
+(synonyms (pairs A) (list (substitution (walkable A)))
+	  (query A) ((pairs A) --> (datastream (pairs A))))
 
-(datatype timestamp-instances    
+(datatype timestamp-instances
   _____________________________
   (value *timestamp*) : number;)
-

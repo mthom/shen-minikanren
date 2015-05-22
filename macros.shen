@@ -5,16 +5,8 @@
      X XG X  -> XG
      _ _  L  -> L)
 
-(defmacro mzero-macro
-  [mzero] -> [])
-
-(defmacro unit-macro
-  [unit A] -> A)
-
-(synonyms (pairs A) (list (substitution (walkable A))))
-
 (defmacro size-s-macro
-  [size-s Ls] -> [length Ls])  
+  [size-s Ls] -> [length Ls])
 
 (defmacro lambdag@-macro
   [lambdag@ S E] -> [/. S E])
@@ -38,8 +30,8 @@
 (defmacro run-macro
   [run nothing X G | Gs] -> (let S  (gensym (protect S))
 			         XG (gensym (protect X))
-			      (replace X XG 
-				     [[/. XG 
+			      (replace X XG
+				     [[/. XG
 					  [map-inf nothing
 						   [/. S [reify [walk* X S]]]
 						   [[all G | Gs] [empty-s]]]]

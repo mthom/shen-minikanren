@@ -303,6 +303,62 @@
 		     (*o NQ1 N NQ)))
 	     (else mk-fail)))
 
+(define logo
+  { (walkable number) --> (walkable number) --> (walkable number)
+    --> (walkable number) --> (query number) }
+  N B Q R -> (condi
+	      ((=== [1] N) (poso B) (=== [] Q) (=== [] R))
+	      ((=== [] Q) (<o N B) (+o R [1] N))
+	      ((=== [1] Q) (>lo B) (=lo N B) (+o R B N))
+	      ((=== [1] B) (poso Q) (+o R [1] N))
+	      ((=== [] B) (poso Q) (=== R N))
+	      ((=== [0 1] B)
+	       (fresh (A AD DD)
+		      (poso DD)
+		      (=== [A AD | DD] N)
+		      (exp2 N [] Q)
+		      (fresh (S)
+			     (splito N DD R S))))
+	      ((fresh (A AD ADD DDD)
+		      (conde
+		       ((=== [1 1] B))
+		       (else (=== [A AD ADD | DDD] B))))
+	       (<lo B N)
+	       (fresh (BW1 BW NW NW1 QL1 QL S)
+		      (exp2 B [] BW1)
+		      (+o BW1 [1] BW)
+		      (<lo Q N)
+		      (fresh (Q1 BWQ1)
+			     (+o Q [1] Q1)
+			     (*o BW Q1 BWQ1)
+			     (<o NW1 BWQ1)
+			     (exp2 N [] NW1)
+			     (+o NW1 [1] NW)
+			     (/o NW BW QL1 S)
+			     (+o QL [1] QL1))		      
+		      (conde
+		       ((=== Q QL))
+		       (else (<lo QL Q)))
+		      (fresh (BQL QH S QDH QD)
+			     (repeated-mul B QL BQL)        
+			     (/o NW BW1 QH S)                
+			     (+o QL QDH QH)
+			     (+o QL QD Q)
+			     (conde
+			      ((=== QD QDH))
+			      (else (<o QD QDH)))
+			     (fresh (BDQ BQ1 BQ)
+				    (repeated-mul B QD BDQ)        
+				    (*o BQL BDQ BQ)                
+				    (*o B BQ BQ1)                
+				    (+o BQ R N)
+				    (<o N BQ1)))))
+	      (else mk-fail)))
+
+(define expo
+  { (walkable number) --> (walkable number) --> (walkable number) --> (query number) }
+  B Q N -> (logo N B Q []))
+
 (define exp2
   { (walkable number) --> (walkable number) --> (walkable number)
     --> (query number) }

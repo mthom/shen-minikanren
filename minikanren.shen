@@ -18,7 +18,7 @@
 
 (define mk-variable?
   { symbol --> boolean }
-  V -> true where (or (variable? V) (reified-name? (str V))) 
+  V -> true where (or (variable? V) (reified-name? (str V)))
   _ -> false)
 
 (define var
@@ -70,7 +70,7 @@
 
 (define mk-occurs-check
   { (walkable A) --> (walkable A) --> (pairs A) --> boolean }
-  (@p V T) (@p V T) S -> true 
+  (@p V T) (@p V T) S -> true
   V [W | Ws] S        -> (or (mk-occurs-check V W S)
 			     (mk-occurs-check V Ws S))
   _ _ _ -> false)
