@@ -44,8 +44,7 @@
 			     (membero X D)))))
 
 (define rembero
-  { (walkable A) --> (walkable A) --> (walkable A) --> (pairs A)
-                 --> (datastream (pairs A)) }
+  { (walkable A) --> (walkable A) --> (walkable A) --> (query A) }
   X L Out -> (conde ((nullo L) (=== [] Out))
 		    ((eq-caro L X) (cdro L Out))
 		    (else (fresh (A D Res)
@@ -54,8 +53,7 @@
 				 (conso A Res Out)))))
 
 (define appendo
-  { (walkable A) --> (walkable A) --> (walkable A) --> (pairs A)
-    --> (datastream (pairs A)) }
+  { (walkable A) --> (walkable A) --> (walkable A) --> (query A) }
   L S Out -> (conde ((nullo L) (=== S Out))
 		    (else (fresh (A D Res)
 				 (conso A D L)
@@ -77,8 +75,7 @@
 
 (define full-addero
   { (walkable number) --> (walkable number) --> (walkable number)
-    --> (walkable number) --> (walkable number)
-    --> (query number) }
+    --> (walkable number) --> (walkable number) --> (query number) }
   B X Y R C -> (conde
 		((=== 0 B) (=== 0 X) (=== 0 Y) (=== 0 R) (=== 0 C))
 		((=== 1 B) (=== 0 X) (=== 0 Y) (=== 1 R) (=== 0 C))
@@ -183,8 +180,7 @@
 				   (bound-*o X Y Z M)))))))
 
 (define =lo
-  { (walkable number) --> (walkable number)
-    --> (query number) }
+  { (walkable number) --> (walkable number) --> (query number) }
   N M -> (conde
 	  ((=== [] N) (=== [] M))
 	  ((=== [1] N) (=== [1] M))
@@ -194,8 +190,7 @@
 		       (=lo X Y)))))
 
 (define <lo
-  { (walkable number) --> (walkable number)
-    --> (query number) }
+  { (walkable number) --> (walkable number) --> (query number) }
   N M -> (conde
 	  ((=== [] N) (poso M))
 	  ((=== [1] N) (>lo M))
@@ -205,15 +200,13 @@
 		       (<lo X Y)))))
 
 (define <=lo
-  { (walkable number) --> (walkable number)
-    --> (query number) }
+  { (walkable number) --> (walkable number) --> (query number) }
   N M -> (condi ((=lo N M) mk-succeed)
 		((<lo N M) mk-succeed)
 		(else mk-fail)))
 
 (define <o
-  { (walkable number) --> (walkable number)
-    --> (query number) }
+  { (walkable number) --> (walkable number) --> (query number) }
   N M -> (condi ((<lo N M) mk-succeed)
 		((=lo N M) (fresh (X)
 				  (poso X)
@@ -221,8 +214,7 @@
 		(else mk-fail)))
 
 (define <=o
-  { (walkable number) --> (walkable number)
-    --> (query number) }
+  { (walkable number) --> (walkable number) --> (query number) }
   N M -> (condi ((=== N M) mk-succeed)
 		((<o N M)  mk-succeed)
 		(else mk-fail)))
@@ -331,11 +323,11 @@
 		      (fresh (Q1 BWQ1)
 			     (+o Q [1] Q1)
 			     (*o BW Q1 BWQ1)
-			     (<o NW1 BWQ1)
-			     (exp2 N [] NW1)
-			     (+o NW1 [1] NW)
-			     (/o NW BW QL1 S)
-			     (+o QL [1] QL1))		      
+			     (<o NW1 BWQ1))
+		      (exp2 N [] NW1)
+		      (+o NW1 [1] NW)
+		      (/o NW BW QL1 S)
+		      (+o QL [1] QL1)		      
 		      (conde
 		       ((=== Q QL))
 		       (else (<lo QL Q)))
