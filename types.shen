@@ -29,28 +29,28 @@
 	  (substitution A) (var * A))
 
 (datatype walkable-type
-  __________________
-  [] : (walkable A);
+  ___________________________
+  [] : (mode (walkable A) -);
 
   V : variable;
   T : number;
-  =======================
-  (@p V T): (walkable A);
+  ================================
+  (@p V T): (mode (walkable A) -);
 
   X  : (walkable A);
   Xs : (walkable A);
-  ========================
-  [X | Xs] : (walkable A);
+  =================================
+  [X | Xs] : (mode (walkable A) -);
 
-  __________________________
-  X : A >> X : (walkable A);
+  ___________________________________
+  X : A >> X : (mode (walkable A) -);
 
-  ____________________________________________
-  X : (variable * number) >> X : (walkable A);
+  _____________________________________________________
+  X : (variable * number) >> X : (mode (walkable A) -);
 
   X : A;
-  _________________
-  X : (walkable A);)
+  __________________________
+  X : (mode (walkable A) -);)
 
 (datatype datastream
   X : A;
