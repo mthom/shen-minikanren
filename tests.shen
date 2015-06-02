@@ -896,6 +896,7 @@
 
 \* 3.101 *\
 (define reverse-list
+  { (walkable A) --> (list (walkable A)) }
   L -> (run* Y (memberrevo Y L)))
 
 \* 4.1.1 *\
@@ -915,6 +916,7 @@
 
 \* 4.7 *\
 (define memo
+  { (walkable A) --> (walkable A) --> (walkable A) --> (query A) }
   X L Out -> (conde ((nullo L) mk-fail)
 		    ((eq-caro L X) (=== L Out))
 		    (else (fresh (D)
@@ -1158,6 +1160,21 @@
    [(create-var _.0) (create-var _.1) (create-var _.2)]
    [(create-var _.0) (create-var _.1) (create-var _.2) (create-var _.3)]])
 
+(test-check "5.20"
+  (run 5 X
+    (fresh (Y)
+	   (appendo
+	    [cake with ice | Y]
+	    [d t | Y]
+	    X)))
+  [[cake with ice d t]
+   [cake with ice (create-var _.1) d t (create-var _.1)]
+   [cake with ice (create-var _.2) (create-var _.3) d t (create-var _.2) (create-var _.3)]
+   [cake with ice (create-var _.3) (create-var _.4) (create-var _.5) d t (create-var _.3)
+	 (create-var _.4) (create-var _.5)]
+   [cake with ice (create-var _.4) (create-var _.5) (create-var _.6) (create-var _.7) d t
+	 (create-var _.4) (create-var _.5) (create-var _.6) (create-var _.7)]])
+
 \* 5.59 *\ 
 (define flatteno
   { (walkable A) --> (walkable A) --> (query A) }
@@ -1176,8 +1193,71 @@
     (flatteno [[a b] c] X))
   [[a b c]])
 
+(test-check "6.7"
+  (run 1 Q
+    (alwayso) 
+    (=== true Q))
+  [true])
+
+(test-check "6.10"
+  (run 5 Q
+    (alwayso) 
+    (=== true Q))
+  [true true true true true])
+
+(test-check "6.11"
+  (run 5 Q
+    (=== true Q) 
+    (alwayso))
+  [true true true true true])
+
+(define salo
+  { (query A) --> (query A) }
+  G -> (conde
+	(mk-succeed mk-succeed)
+	(else G)))
+
+(test-check "6.13"
+  (run 1 Q
+    (salo (alwayso))
+    (=== true Q))
+  [true])
+
+(test-check "6.14"
+  (run 1 Q
+    (salo (nevero))
+    (=== true Q))
+  [true])
+
+(test-check "6.21"
+  (run 5 Q
+    (condi                                                                  
+      ((=== false Q) (alwayso))                                              
+      (else (anyo (=== true Q)))) 
+    (=== true Q))
+  [true true true true true])
+
+(test-check "6.24"
+  (run 5 R
+    (condi
+      ((teacupo R) mk-succeed)
+      ((=== false R) mk-succeed)
+      (else mk-fail)))
+  [tea false cup])
+
+(test-check "6.25"
+  (run 5 Q
+    (condi
+      ((=== false Q) (alwayso))
+      ((=== true Q) (alwayso))
+      (else mk-fail))
+    (=== true Q))
+  [true true true true true])
+
 \* 7.5 *\
 (define bit-xoro
+  { (walkable number) --> (walkable number) --> (walkable number)
+    --> (query number) }
   X Y R -> (conde
       ((=== 0 X) (=== 0 Y) (=== 0 R))
       ((=== 1 X) (=== 0 Y) (=== 1 R))

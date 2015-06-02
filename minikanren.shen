@@ -149,8 +149,8 @@
   _ P [X] -> [(P X)]
   nothing  P (@p X F) -> [(P X) | (map-inf nothing P (thaw F))]
   [just N] P (@p X F) -> [(P X) | (map-inf [just (- N 1)] P (thaw F))]
-                         where (> N 0)
-  _ _ _ -> [])
+                         where (> N 1)
+  _ P (@p X F) -> [(P X)])
 
 (define mk-bind
   { (datastream A) --> (A --> (datastream B)) --> (datastream B) }
