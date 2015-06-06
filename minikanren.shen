@@ -70,6 +70,10 @@
 
 (define mk-occurs-check
   { (walkable A) --> (walkable A) --> (pairs A) --> boolean }
+  X V S -> (mk-occurs-check- X (walk V S) S))
+
+(define mk-occurs-check-
+  { (walkable A) --> (walkable A) --> (pairs A) --> boolean }
   (@p V T) (@p V T) S -> true
   V [W | Ws] S        -> (or (mk-occurs-check V W S)
 			     (mk-occurs-check V Ws S))
@@ -134,11 +138,11 @@
 
 (define ===
   { (walkable A) --> (walkable A) --> (query A) }
-  V W S -> (maybe [] (/. S [S]) (mk-unify V W S)))
+  V W S -> (maybe [] mk-succeed (mk-unify V W S)))
 
 (define ===-check
   { (walkable A) --> (walkable A) --> (query A) }
-  V W S -> (maybe [] (/. S [S]) (mk-unify-check V W S)))
+  V W S -> (maybe [] mk-succeed (mk-unify-check V W S)))
 
 (define map-inf
   { (maybe number)
@@ -189,8 +193,8 @@
   [alli] -> [mk-succeed]
   [alli G] -> (let S (gensym (protect S))
 		[lambdag@ S [G S]])
-  [alli G1 G2 | Gs] -> (let S (gensym (protect S))
-			 [lambdag@ S [mk-bindi [G1 S] [alli G2 | Gs]]]))
+  [alli G1 | Gs] -> (let S (gensym (protect S))
+		      [lambdag@ S [mk-bindi [G1 S] [alli | Gs]]]))
 
 (defmacro anyi-macro
   [anyi G1 G2] -> (let S (gensym (protect S))

@@ -1279,12 +1279,76 @@
       (=== [X Y R] S)))
   [[(create-var _.1) [] (create-var _.1)]
    [[] [(create-var _.2) | (create-var _.3)] [(create-var _.2) | (create-var _.3)]]
-   [[1] [1] [0 | 1]]])
+   [[1] [1] [0 1]]])
+
+(test-check "7.126"
+	    (run* S (fresh (X Y) (addero 0 X Y [1 0 1]) (=== [X Y] S)))
+	    [[[1 0 1] []] [[] [1 0 1]] [[1] [0 0 1]] [[0 0 1] [1]]
+	     [[1 1] [0 1]] [[0 1] [1 1]]])
+
+(test-check "7.129"
+	    (run* S (fresh (X Y) (+o X Y [1 0 1]) (=== [X Y] S)))
+	    [[[1 0 1] []] [[] [1 0 1]] [[1] [0 0 1]] [[0 0 1] [1]]
+	     [[1 1] [0 1]] [[0 1] [1 1]]])
+
+(test-check "7.131"
+	    (run* Q (-o [0 0 0 1] [1 0 1] Q))
+	    [[1 1]])
+
+(test-check "7.132"
+	    (run* Q (-o [0 1 1] [0 1 1] Q))
+	    [[]])
 
 (test-check "8.4"
   (run* P
     (*o [0 1] [0 0 1] P))  
   [[0 0 0 1]])
+
+\* 8.10 *\
+(define *o
+  { (walkable number) --> (walkable number) --> (walkable number)
+    --> (query number) }
+  N M P -> (condi
+	    ((=== [] N) (=== [] P))
+	    ((poso N) (=== [] M) (=== [] P))  
+	    ((=== [1] N) (poso M) (=== M P))   
+	    ((>lo N) (=== [1] M) (=== N P))
+	    ((fresh (X Z)
+		    (=== [0 | X] N) (poso X)
+		    (=== [0 | Z] P) (poso Z)
+		    (>lo M)
+		    (*o X M Z)))
+	    ((fresh (X Y)
+		    (=== [1 | X] N) (poso X)
+		    (=== [0 | Y] M) (poso Y)
+		    (*o M N P)))
+	    ((fresh (X Y)
+		    (=== [1 | X] N) (poso X)
+		    (=== [1 | Y] M) (poso Y)
+		    (odd-*o X N M P)))
+	    (else mk-fail)))
+
+(test-check "8.20"
+  (run 1 T
+    (fresh (N M)
+      (*o N M [1])
+      (=== [N M] T)))
+  [[[1] [1]]])
+
+(test-check "8.23"
+  (run 2 T
+    (fresh (N M)
+      (*o N M [1])
+      (=== [N M] T)))
+  [[[1] [1]]])
+
+(test-check "8.23"
+	    (run 2 T (fresh (N M) (*o N M [1]) (=== [N M] T)))
+	    [[[1] [1]]])
+
+(test-check "8.24"
+  (run* P (*o [1 1 1] [1 1 1 1 1 1] P))
+  [[1 0 0 1 1 1 0 1 1]])
 
 (test-check "10.14"
   (run* Q
@@ -1314,7 +1378,7 @@
   [tea])
 
 (test-check "10.22"
-	    (run* R		  
+  (run* R		  
     (conda
      ((teacupo R) mk-succeed)
      ((=== false R) mk-succeed)

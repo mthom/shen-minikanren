@@ -115,9 +115,11 @@
 	       (poso M))
 	      ((=== 1 D) (=== [] M)
 	       (addero 0 N [1] R))
+	      ((=== 1 D) (=== [] N) (poso M)
+	       (addero 0 [1] M R))
 	      ((=== [1] N) (=== [1] M)
 	       (fresh (A C)
-		      (=== [A | C]  R)
+		      (=== [A C] R)
 		      (full-addero D 1 1 A C)))
 	      ((=== [1] N) (gen-addero D N M R))
 	      ((=== [1] M) (>lo N) (>lo R)
@@ -164,6 +166,7 @@
 		    (bound-*o Q P N M)
 		    (*o X M Q)
 		    (+o [0 | Q] M P)))
+
 (define bound-*o
   { (walkable number) --> (walkable number) --> (walkable number)
     --> (walkable number) --> (query number) }
@@ -227,7 +230,7 @@
 	      ((fresh (B NH)
 		      (=== [0 B | NH] N)
 		      (=== [] R)
-		      (=== [0 B | NH] H)
+		      (=== [B | NH] H)
 		      (=== [] L)))
 	      ((fresh (NH)
 		      (=== [1 | NH] N)
@@ -327,13 +330,13 @@
 		      (exp2 N [] NW1)
 		      (+o NW1 [1] NW)
 		      (/o NW BW QL1 S)
-		      (+o QL [1] QL1)		      
+		      (+o QL [1] QL1)
 		      (conde
 		       ((=== Q QL))
 		       (else (<lo QL Q)))
 		      (fresh (BQL QH S QDH QD)
-			     (repeated-mul B QL BQL)        
-			     (/o NW BW1 QH S)                
+			     (repeated-mul B QL BQL)
+			     (/o NW BW1 QH S)         
 			     (+o QL QDH QH)
 			     (+o QL QD Q)
 			     (conde
